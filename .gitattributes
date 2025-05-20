@@ -1,0 +1,7 @@
+# Native binaries
+*.aar binary
+Plugins/iOS/ResponslySDK.xcframework/**/ResponslySDK binary
+*.swiftdoc binary
+
+# Shell scripts must keep LF line endings
+*.sh text eol=lf

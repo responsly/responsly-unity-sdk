@@ -1,0 +1,10 @@
+# Build scratch (scripts/build-native.sh, when RESPONSLY_BUILD_DIR points here)
+.build/
+
+# macOS
+.DS_Store
+
+# Unity ignores folders that end with ~, and so do many global gitignores (editor backups).
+# These two are part of the package.
+!Native~/
+!Samples~/
