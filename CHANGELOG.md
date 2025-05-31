@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.6.2] - 2025-05-31
+
+- Define the editor assembly.
+
 ## [0.6.1] - 2025-05-26
 
 - Define the runtime assembly.
