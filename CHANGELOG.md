@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.6.4] - 2025-06-13
+
+- Model survey events and answer values.
+
 ## [0.6.3] - 2025-06-04
 
 - Add survey initialization and display options.
