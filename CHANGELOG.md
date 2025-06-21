@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.6.5] - 2025-06-21
+
+- Define the native platform contract.
+
 ## [0.6.4] - 2025-06-13
 
 - Model survey events and answer values.
