@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.6.7] - 2025-07-05
+
+- Encode options and traits for native bridges.
+
 ## [0.6.6] - 2025-06-30
 
 - Implement JSON serialization for SDK values.
