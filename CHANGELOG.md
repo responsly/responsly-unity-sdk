@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.7.0] - 2025-07-10
+
+- Expose the public Unity survey API.
+
 ## [0.6.7] - 2025-07-05
 
 - Encode options and traits for native bridges.
