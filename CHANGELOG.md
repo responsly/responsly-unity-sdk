@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.7.1] - 2025-07-17
+
+- Dispatch callbacks on the Unity main thread.
+
 ## [0.7.0] - 2025-07-10
 
 - Expose the public Unity survey API.
