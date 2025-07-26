@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.7.2] - 2025-07-26
+
+- Support calls in the Editor and unsupported platforms.
+
 ## [0.7.1] - 2025-07-17
 
 - Dispatch callbacks on the Unity main thread.
