@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.7.3] - 2025-08-03
+
+- Connect the C# facade to Android.
+
 ## [0.7.2] - 2025-07-26
 
 - Support calls in the Editor and unsupported platforms.
