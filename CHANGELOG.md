@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.7.4] - 2025-08-13
+
+- Define Android callback delivery.
+
 ## [0.7.3] - 2025-08-03
 
 - Connect the C# facade to Android.
