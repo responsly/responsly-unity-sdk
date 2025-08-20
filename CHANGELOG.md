@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.7.5] - 2025-08-20
+
+- Serialize Android bridge event payloads.
+
 ## [0.7.4] - 2025-08-13
 
 - Define Android callback delivery.
