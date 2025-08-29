@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.7.6] - 2025-08-29
+
+- Implement Android native calls and display guards.
+
 ## [0.7.5] - 2025-08-20
 
 - Serialize Android bridge event payloads.

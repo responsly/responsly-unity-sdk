@@ -1,6 +1,6 @@
 {
   "name": "com.responsly.sdk",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "displayName": "Responsly SDK",
   "description": "Show Responsly surveys inside your iOS and Android game: as a bottom sheet, a dialog or full screen, triggered by events, screens and user traits. Targeting runs on the device. The package wraps the native Responsly iOS and Android SDKs, which are included.",
   "unity": "2022.3",
