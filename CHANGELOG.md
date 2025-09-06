@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.7.7] - 2025-09-06
+
+- Connect the C# facade to iOS.
+
 ## [0.7.6] - 2025-08-29
 
 - Implement Android native calls and display guards.
