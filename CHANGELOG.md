@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.8.0] - 2025-09-15
+
+- Export the Swift bridge for Unity.
+
 ## [0.7.7] - 2025-09-06
 
 - Connect the C# facade to iOS.
