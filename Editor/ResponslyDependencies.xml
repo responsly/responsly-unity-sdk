@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Read by the External Dependency Manager for Unity (EDM4U, com.google.external-dependency-manager).
+
+  Plugins/Android/responsly-sdk.aar contains the Responsly Android SDK without the libraries it
+  depends on; these are the same three that the SDK's Maven artifact (com.responsly:sdk) declares.
+  Without EDM4U, add them to mainTemplate.gradle by hand - see README.md, "Android dependencies".
+  scripts/verify-package.sh checks this list against Native~/android/build-info.json.
+-->
+<dependencies>
+  <androidPackages>
+    <repositories>
+      <repository>https://maven.google.com</repository>
+      <repository>https://repo.maven.apache.org/maven2</repository>
+    </repositories>
+    <androidPackage spec="androidx.webkit:webkit:1.15.0" />
+    <androidPackage spec="androidx.annotation:annotation:1.9.1" />
+    <androidPackage spec="org.jetbrains.kotlin:kotlin-stdlib:2.0.21" />
+  </androidPackages>
+</dependencies>

@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.8.1] - 2025-09-20
+
+- Declare Android dependencies for Unity.
+
 ## [0.8.0] - 2025-09-15
 
 - Export the Swift bridge for Unity.
