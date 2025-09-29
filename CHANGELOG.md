@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.8.2] - 2025-09-29
+
+- Configure generated iOS Xcode projects.
+
 ## [0.8.1] - 2025-09-20
 
 - Declare Android dependencies for Unity.
