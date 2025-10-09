@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.8.3] - 2025-10-09
+
+- Validate Unity and mobile build requirements.
+
 ## [0.8.2] - 2025-09-29
 
 - Configure generated iOS Xcode projects.
