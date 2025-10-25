@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.8.5] - 2025-10-25
+
+- Define the bundled iOS XCFramework.
+
 ## [0.8.4] - 2025-10-19
 
 - Bundle the Android SDK and Unity bridge.
