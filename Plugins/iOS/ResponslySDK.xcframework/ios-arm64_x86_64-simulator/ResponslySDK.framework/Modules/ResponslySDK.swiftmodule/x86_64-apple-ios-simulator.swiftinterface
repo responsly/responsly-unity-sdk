@@ -1,0 +1,300 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.3 effective-5.10 (swiftlang-6.3.0.123.5 clang-2100.0.123.102)
+// swift-module-flags: -target x86_64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-experimental-feature DebugDescriptionMacro -module-name ResponslySDK -package-name responsly_ios_sdk
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3
+import Foundation
+import Foundation/*.Bundle*/
+import Foundation/*.ProcessInfo*/
+import Foundation/*.URL*/
+import Swift
+import UIKit
+import WebKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+import os.log
+import os
+public struct ResponslySurvey : Swift.Hashable, Swift.Sendable {
+  public let id: Swift.String
+  public let name: Swift.String
+  public init(id: Swift.String, name: Swift.String)
+  public func toDictionary() -> [Swift.String : Any]
+  public static func == (a: ResponslySDK.ResponslySurvey, b: ResponslySDK.ResponslySurvey) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum ResponslyTriggerType : Swift.String, Swift.CaseIterable, Swift.Sendable {
+  case event
+  case screen
+  case appLaunch
+  case manual
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [ResponslySDK.ResponslyTriggerType]
+  public typealias RawValue = Swift.String
+  nonisolated public static var allCases: [ResponslySDK.ResponslyTriggerType] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ResponslyTrigger : Swift.Hashable, Swift.Sendable {
+  public let type: ResponslySDK.ResponslyTriggerType
+  public let name: Swift.String?
+  public init(type: ResponslySDK.ResponslyTriggerType, name: Swift.String? = nil)
+  public func toDictionary() -> [Swift.String : Any]
+  public static func == (a: ResponslySDK.ResponslyTrigger, b: ResponslySDK.ResponslyTrigger) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum ResponslyNotShownReason : Swift.String, Swift.CaseIterable, Swift.Sendable {
+  case disabled
+  case notInitialized
+  case configUnavailable
+  case surveyNotFound
+  case anotherSurveyVisible
+  case anotherSurveySelected
+  case paused
+  case outsideSchedule
+  case platformMismatch
+  case appMismatch
+  case localeMismatch
+  case audienceMismatch
+  case alreadyCompleted
+  case frequencyLimit
+  case recontactWait
+  case globalCooldown
+  case sampledOut
+  case screenChanged
+  case vetoed
+  case loadFailed
+  case surveyUnavailable
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [ResponslySDK.ResponslyNotShownReason]
+  public typealias RawValue = Swift.String
+  nonisolated public static var allCases: [ResponslySDK.ResponslyNotShownReason] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ResponslyAnswer : @unchecked Swift.Sendable {
+  public let questionId: Swift.String
+  public let type: Swift.String
+  public let title: Swift.String
+  public let value: Any
+  public init(questionId: Swift.String, type: Swift.String, title: Swift.String, value: Any)
+  public func toDictionary() -> [Swift.String : Any]
+}
+public struct ResponslySurveyShownEvent : Swift.Hashable, Swift.Sendable {
+  public let survey: ResponslySDK.ResponslySurvey
+  public let trigger: ResponslySDK.ResponslyTrigger
+  public init(survey: ResponslySDK.ResponslySurvey, trigger: ResponslySDK.ResponslyTrigger)
+  public func toDictionary() -> [Swift.String : Any]
+  public static func == (a: ResponslySDK.ResponslySurveyShownEvent, b: ResponslySDK.ResponslySurveyShownEvent) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct ResponslySurveyNotShownEvent : Swift.Hashable, Swift.Sendable {
+  public let surveyId: Swift.String
+  public let reason: ResponslySDK.ResponslyNotShownReason
+  public init(surveyId: Swift.String, reason: ResponslySDK.ResponslyNotShownReason)
+  public func toDictionary() -> [Swift.String : Any]
+  public static func == (a: ResponslySDK.ResponslySurveyNotShownEvent, b: ResponslySDK.ResponslySurveyNotShownEvent) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct ResponslyQuestionAnsweredEvent : @unchecked Swift.Sendable {
+  public let surveyId: Swift.String
+  public let questionId: Swift.String
+  public let type: Swift.String
+  public let title: Swift.String
+  public let value: Any
+  public init(surveyId: Swift.String, questionId: Swift.String, type: Swift.String, title: Swift.String, value: Any)
+  public func toDictionary() -> [Swift.String : Any]
+}
+public struct ResponslySurveyCompletedEvent : @unchecked Swift.Sendable {
+  public let surveyId: Swift.String
+  public let responseId: Swift.String
+  public let answers: [ResponslySDK.ResponslyAnswer]
+  public init(surveyId: Swift.String, responseId: Swift.String, answers: [ResponslySDK.ResponslyAnswer])
+  public func toDictionary() -> [Swift.String : Any]
+}
+public struct ResponslySurveyDismissedEvent : Swift.Hashable, Swift.Sendable {
+  public let surveyId: Swift.String
+  public init(surveyId: Swift.String)
+  public func toDictionary() -> [Swift.String : Any]
+  public static func == (a: ResponslySDK.ResponslySurveyDismissedEvent, b: ResponslySDK.ResponslySurveyDismissedEvent) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct ResponslySurveyErrorEvent : Swift.Hashable, Swift.Sendable {
+  public let surveyId: Swift.String
+  public let code: Swift.String
+  public let message: Swift.String
+  public init(surveyId: Swift.String, code: Swift.String, message: Swift.String)
+  public func toDictionary() -> [Swift.String : Any]
+  public static func == (a: ResponslySDK.ResponslySurveyErrorEvent, b: ResponslySDK.ResponslySurveyErrorEvent) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol ResponslyListener {
+  @_Concurrency.MainActor func surveyShown(_ event: ResponslySDK.ResponslySurveyShownEvent)
+  @_Concurrency.MainActor func surveyNotShown(_ event: ResponslySDK.ResponslySurveyNotShownEvent)
+  @_Concurrency.MainActor func questionAnswered(_ event: ResponslySDK.ResponslyQuestionAnsweredEvent)
+  @_Concurrency.MainActor func surveyCompleted(_ event: ResponslySDK.ResponslySurveyCompletedEvent)
+  @_Concurrency.MainActor func surveyDismissed(_ event: ResponslySDK.ResponslySurveyDismissedEvent)
+  @_Concurrency.MainActor func surveyError(_ event: ResponslySDK.ResponslySurveyErrorEvent)
+}
+extension ResponslySDK.ResponslyListener {
+  @_Concurrency.MainActor public func surveyShown(_ event: ResponslySDK.ResponslySurveyShownEvent)
+  @_Concurrency.MainActor public func surveyNotShown(_ event: ResponslySDK.ResponslySurveyNotShownEvent)
+  @_Concurrency.MainActor public func questionAnswered(_ event: ResponslySDK.ResponslyQuestionAnsweredEvent)
+  @_Concurrency.MainActor public func surveyCompleted(_ event: ResponslySDK.ResponslySurveyCompletedEvent)
+  @_Concurrency.MainActor public func surveyDismissed(_ event: ResponslySDK.ResponslySurveyDismissedEvent)
+  @_Concurrency.MainActor public func surveyError(_ event: ResponslySDK.ResponslySurveyErrorEvent)
+}
+public struct ResponslyListenerToken : Swift.Hashable, Swift.Sendable {
+  public static func == (a: ResponslySDK.ResponslyListenerToken, b: ResponslySDK.ResponslyListenerToken) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+final public class ResponslyListenerBlock : ResponslySDK.ResponslyListener {
+  public init(surveyShown: (@_Concurrency.MainActor (ResponslySDK.ResponslySurveyShownEvent) -> Swift.Void)? = nil, surveyNotShown: (@_Concurrency.MainActor (ResponslySDK.ResponslySurveyNotShownEvent) -> Swift.Void)? = nil, questionAnswered: (@_Concurrency.MainActor (ResponslySDK.ResponslyQuestionAnsweredEvent) -> Swift.Void)? = nil, surveyCompleted: (@_Concurrency.MainActor (ResponslySDK.ResponslySurveyCompletedEvent) -> Swift.Void)? = nil, surveyDismissed: (@_Concurrency.MainActor (ResponslySDK.ResponslySurveyDismissedEvent) -> Swift.Void)? = nil, surveyError: (@_Concurrency.MainActor (ResponslySDK.ResponslySurveyErrorEvent) -> Swift.Void)? = nil)
+  @_Concurrency.MainActor final public func surveyShown(_ event: ResponslySDK.ResponslySurveyShownEvent)
+  @_Concurrency.MainActor final public func surveyNotShown(_ event: ResponslySDK.ResponslySurveyNotShownEvent)
+  @_Concurrency.MainActor final public func questionAnswered(_ event: ResponslySDK.ResponslyQuestionAnsweredEvent)
+  @_Concurrency.MainActor final public func surveyCompleted(_ event: ResponslySDK.ResponslySurveyCompletedEvent)
+  @_Concurrency.MainActor final public func surveyDismissed(_ event: ResponslySDK.ResponslySurveyDismissedEvent)
+  @_Concurrency.MainActor final public func surveyError(_ event: ResponslySDK.ResponslySurveyErrorEvent)
+  @objc deinit
+}
+public enum ResponslyLogLevel : Swift.Int, Swift.Comparable, Swift.CaseIterable, Swift.Sendable {
+  case none
+  case error
+  case info
+  case debug
+  public static func < (lhs: ResponslySDK.ResponslyLogLevel, rhs: ResponslySDK.ResponslyLogLevel) -> Swift.Bool
+  public var name: Swift.String {
+    get
+  }
+  public init?(name: Swift.String)
+  public init?(rawValue: Swift.Int)
+  public typealias AllCases = [ResponslySDK.ResponslyLogLevel]
+  public typealias RawValue = Swift.Int
+  nonisolated public static var allCases: [ResponslySDK.ResponslyLogLevel] {
+    get
+  }
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum ResponslyPresentationStyle : Swift.String, Swift.CaseIterable, Swift.Sendable {
+  case bottomSheet
+  case dialog
+  case fullscreen
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [ResponslySDK.ResponslyPresentationStyle]
+  public typealias RawValue = Swift.String
+  nonisolated public static var allCases: [ResponslySDK.ResponslyPresentationStyle] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ResponslyOptions : Swift.Equatable, Swift.Sendable {
+  public static let defaultAPIHost: Foundation.URL
+  public var apiHost: Foundation.URL
+  public var logLevel: ResponslySDK.ResponslyLogLevel
+  public init(apiHost: Foundation.URL = ResponslyOptions.defaultAPIHost, logLevel: ResponslySDK.ResponslyLogLevel = .error)
+  public static func == (a: ResponslySDK.ResponslyOptions, b: ResponslySDK.ResponslyOptions) -> Swift.Bool
+}
+public struct ResponslyShowOptions : Swift.Equatable, Swift.Sendable {
+  public var force: Swift.Bool
+  public var hiddenFields: [Swift.String : Swift.String]
+  public var locale: Swift.String?
+  public var presentation: ResponslySDK.ResponslyPresentationStyle?
+  public init(force: Swift.Bool = false, hiddenFields: [Swift.String : Swift.String] = [:], locale: Swift.String? = nil, presentation: ResponslySDK.ResponslyPresentationStyle? = nil)
+  public static func == (a: ResponslySDK.ResponslyShowOptions, b: ResponslySDK.ResponslyShowOptions) -> Swift.Bool
+}
+public enum ResponslyValue : Swift.Hashable, Swift.Sendable {
+  case string(Swift.String)
+  case number(Swift.Double)
+  case bool(Swift.Bool)
+  case date(Foundation.Date)
+  public static func from(_ any: Any?) -> ResponslySDK.ResponslyValue?
+  public static func traits(from dictionary: [Swift.String : Any?]) -> [Swift.String : ResponslySDK.ResponslyValue?]
+  public static func properties(from dictionary: [Swift.String : Any?]) -> [Swift.String : ResponslySDK.ResponslyValue]
+  public static func == (a: ResponslySDK.ResponslyValue, b: ResponslySDK.ResponslyValue) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension ResponslySDK.ResponslyValue : Swift.ExpressibleByStringLiteral {
+  public init(stringLiteral value: Swift.String)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringLiteralType = Swift.String
+  public typealias UnicodeScalarLiteralType = Swift.String
+}
+extension ResponslySDK.ResponslyValue : Swift.ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Swift.Int)
+  public typealias IntegerLiteralType = Swift.Int
+}
+extension ResponslySDK.ResponslyValue : Swift.ExpressibleByFloatLiteral {
+  public init(floatLiteral value: Swift.Double)
+  public typealias FloatLiteralType = Swift.Double
+}
+extension ResponslySDK.ResponslyValue : Swift.ExpressibleByBooleanLiteral {
+  public init(booleanLiteral value: Swift.Bool)
+  public typealias BooleanLiteralType = Swift.Bool
+}
+@_hasMissingDesignatedInitializers final public class Responsly : @unchecked Swift.Sendable {
+  public static let shared: ResponslySDK.Responsly
+  public static let sdkVersion: Swift.String
+  final public func initialize(sdkKey: Swift.String, options: ResponslySDK.ResponslyOptions = ResponslyOptions())
+  final public func identify(userId: Swift.String, traits: [Swift.String : ResponslySDK.ResponslyValue?] = [:])
+  final public func setAttributes(_ traits: [Swift.String : ResponslySDK.ResponslyValue?])
+  final public func track(_ event: Swift.String, properties: [Swift.String : ResponslySDK.ResponslyValue] = [:])
+  final public func screen(_ name: Swift.String)
+  final public func showSurvey(_ surveyId: Swift.String, options: ResponslySDK.ResponslyShowOptions = ResponslyShowOptions())
+  final public func closeSurvey()
+  final public func pause()
+  final public func resume()
+  final public func setLocale(_ languageTag: Swift.String?)
+  final public func setHiddenFields(_ fields: [Swift.String : Swift.String])
+  final public func setTrackingEnabled(_ enabled: Swift.Bool)
+  final public func reset()
+  final public func setDisplayGuard(_ guard: ((ResponslySDK.ResponslySurvey, @escaping (Swift.Bool) -> Swift.Void) -> Swift.Void)?)
+  @discardableResult
+  final public func addListener(_ listener: any ResponslySDK.ResponslyListener) -> ResponslySDK.ResponslyListenerToken
+  final public func removeListener(_ token: ResponslySDK.ResponslyListenerToken)
+  @objc deinit
+}
+extension ResponslySDK.ResponslyTriggerType : Swift.Equatable {}
+extension ResponslySDK.ResponslyTriggerType : Swift.Hashable {}
+extension ResponslySDK.ResponslyTriggerType : Swift.RawRepresentable {}
+extension ResponslySDK.ResponslyNotShownReason : Swift.Equatable {}
+extension ResponslySDK.ResponslyNotShownReason : Swift.Hashable {}
+extension ResponslySDK.ResponslyNotShownReason : Swift.RawRepresentable {}
+extension ResponslySDK.ResponslyLogLevel : Swift.Hashable {}
+extension ResponslySDK.ResponslyLogLevel : Swift.RawRepresentable {}
+extension ResponslySDK.ResponslyPresentationStyle : Swift.Equatable {}
+extension ResponslySDK.ResponslyPresentationStyle : Swift.Hashable {}
+extension ResponslySDK.ResponslyPresentationStyle : Swift.RawRepresentable {}

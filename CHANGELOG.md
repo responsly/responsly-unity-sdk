@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.8.7] - 2025-11-05
+
+- Ship the iOS simulator framework and build metadata.
+
 ## [0.8.6] - 2025-10-31
 
 - Ship the iOS device framework.
