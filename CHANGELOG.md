@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.9.1] - 2025-11-18
+
+- Verify Android bridge behavior on the JVM.
+
 ## [0.9.0] - 2025-11-08
 
 - Include the native iOS privacy manifest.
