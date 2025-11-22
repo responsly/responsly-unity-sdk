@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.9.2] - 2025-11-22
+
+- Verify Swift bridge events and display decisions.
+
 ## [0.9.1] - 2025-11-18
 
 - Verify Android bridge behavior on the JVM.
