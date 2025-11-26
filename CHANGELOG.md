@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.9.3] - 2025-11-26
+
+- Provide a survey integration demo.
+
 ## [0.9.2] - 2025-11-22
 
 - Verify Swift bridge events and display decisions.
