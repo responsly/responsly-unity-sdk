@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [0.9.5] - 2025-12-16
+
+- Verify package metadata and native bridge contracts.
+
 ## [0.9.4] - 2025-12-06
 
 - Build native libraries from pinned SDK commits.
