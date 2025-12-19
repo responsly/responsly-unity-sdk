@@ -25,7 +25,7 @@ namespace Responsly
     public static class ResponslySDK
     {
         /// <summary>The version of this package and of the native SDKs inside it.</summary>
-        public const string SdkVersion = "0.9.5";
+        public const string SdkVersion = "1.0.0";
 
         private const string LogPrefix = "[Responsly] ";
 

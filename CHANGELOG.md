@@ -2,6 +2,12 @@
 
 All notable changes to this SDK are documented here.
 
+## [1.0.0] - 2025-12-19
+
+- First stable release.
+
+- First stable SDK release with installation guides.
+
 ## [0.9.5] - 2025-12-16
 
 - Verify package metadata and native bridge contracts.
