@@ -145,7 +145,7 @@ All calls are static methods of `Responsly.ResponslySDK`. Every call returns at 
 | `SetTrackingEnabled(enabled)` | `false` switches the SDK off: no network, no targeting, nothing shown. Saved on the device. |
 | `Reset()` | Forgets the user, traits, counters and cached configuration; closes a visible survey. Call it on logout. |
 | `SetDisplayGuard(guard)` | A `Func<ResponslySurvey, bool>` asked on Unity's main thread before a survey becomes visible; `false` vetoes it. An exception counts as allow, and so does no answer within 2 seconds. Not asked for `Force`. `null` removes it. |
-| `ResponslySDK.SdkVersion` | `"1.0.0"` |
+| `ResponslySDK.SdkVersion` | `"1.1.0"` |
 
 Trait and property values are `string`, numbers (`int`, `long`, `float`, `double`, `decimal`), `bool` or dates. A `DateTime` or `DateTimeOffset` is sent as an ISO 8601 UTC string with seconds precision (`2026-11-10T12:00:00Z`); passing such a string yourself is the same thing. Anything else is sent as its text.
 
@@ -204,7 +204,6 @@ Build and run on an iOS or Android device, simulator or emulator. With the `Debu
 - **Unity patch versions.** `.xcframework` plug-ins are imported from Unity 2022.3.23f1; on earlier 2022.3 releases the iOS build fails with `No such module 'ResponslySDK'`. Unity builds Android with Android Gradle Plugin 7.4.2 from 2022.3.38f1; earlier 2022.3 releases use 7.1.2, while `androidx.webkit` 1.15.0 declares 7.2 as its minimum, so the Gradle build may stop there. The package warns before a build in both cases.
 - **Events wait for the next frame.** The native SDKs report on the platform's UI thread; the package queues events and raises them from `Update` of a hidden `DontDestroyOnLoad` object, created by the first SDK call. While the Unity player is not running (app in the background, another activity on top) events wait, and the display guard cannot answer: after 2 seconds the survey is allowed.
 - **Calls from background threads** are also queued and reach the native SDK on the next frame.
-- **Hardware acceleration on Android.** Unity declares its activity with `android:hardwareAccelerated="false"`, and a survey shown above it inherits that. If surveys scroll or animate poorly, set `android:hardwareAccelerated="true"` on the Unity activity in a custom main manifest (**Publishing Settings → Custom Main Manifest**).
 - **Dates** in traits are text (ISO 8601 UTC). They compare correctly with the date conditions set in Responsly.
 - **The Editor shows nothing.** There is no preview of a survey in Play mode.
 - **tvOS, visionOS, WebGL and desktop** are not supported; the calls are no-ops there.

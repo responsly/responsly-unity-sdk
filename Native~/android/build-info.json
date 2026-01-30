@@ -1,9 +1,9 @@
 {
   "artifact": "Plugins/Android/responsly-sdk.aar",
-  "sha256": "13040a0cd4cf877b5d87a5d953254920388cc816ce32775e10c56de630917751",
+  "sha256": "5c229128d80f7a2e0dd91bce46d547157e667ddca01ea375deda35dce6809fca",
   "sdk": "responsly-android-sdk",
-  "sdkVersion": "1.0.0",
-  "sdkCommit": "4fc3d021283fb472cea8c6add053dca0891ca679",
+  "sdkVersion": "1.1.0",
+  "sdkCommit": "6f82067e0fda1e2b2037cc619566d3a52765c624",
   "contents": "com.responsly.sdk (the SDK) and com.responsly.unity (the Unity bridge, Native~/android/java)",
   "dependencies": [
     "org.jetbrains.kotlin:kotlin-stdlib:2.0.21",
