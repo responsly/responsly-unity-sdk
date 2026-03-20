@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [1.1.1] - 2026-03-20
+
+- README: shorter note on the External Dependency Manager.
+
 ## [1.1.0] - 2026-01-30
 
 - Synchronize native SDK sources and packages.
