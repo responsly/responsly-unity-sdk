@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [1.2.0] - 2026-05-25
+
+- Record the native SDK commits.
+
 ## [1.1.1] - 2026-03-20
 
 - README: shorter note on the External Dependency Manager.
