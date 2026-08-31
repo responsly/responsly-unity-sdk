@@ -2,6 +2,10 @@
 
 All notable changes to this SDK are documented here.
 
+## [1.2.1] - 2026-08-31
+
+- Refresh package and integration metadata.
+
 ## [1.2.0] - 2026-05-25
 
 - Record the native SDK commits.

@@ -2,12 +2,12 @@
   "artifact": "Plugins/iOS/ResponslySDK.xcframework",
   "linkage": "static framework",
   "slices": [
-    { "id": "ios-arm64", "architectures": "arm64", "sha256": "abcbe333b53543e742c801756cb3e67a72aeac9de335da9c7c9337be540cbbbc" },
-    { "id": "ios-arm64_x86_64-simulator", "architectures": "x86_64 arm64", "sha256": "d37a64814176821a45add6a66ea5d45a14f975d58d9becf28de57dea06ee1156" }
+    { "id": "ios-arm64", "architectures": "arm64", "sha256": "969aeca3278cc036b71bfb9b3911c993bbcf9bf1e788fe91152429f58569d55e" },
+    { "id": "ios-arm64_x86_64-simulator", "architectures": "x86_64 arm64", "sha256": "ec42fd626030fb7af71683ff5fd076be138887b5de0cd3cae826dc6e3fed5ce0" }
   ],
   "sdk": "responsly-ios-sdk",
-  "sdkVersion": "1.2.0",
-  "sdkCommit": "3acc96f2e6602d284401c64fab209d0dd2029f19",
+  "sdkVersion": "1.2.1",
+  "sdkCommit": "903dd33ccd48eebd639ed7a307106dcfd1aa06e8",
   "minimumIOS": "15.0",
   "builtWith": "Xcode 26.4 Build version 17E192, Swift 6.3"
 }
