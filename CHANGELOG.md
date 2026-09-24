@@ -2,6 +2,12 @@
 
 All notable changes to this SDK are documented here.
 
+## [Unreleased]
+
+### Fixed
+
+- Register the iOS bridge listener once when callbacks are configured concurrently, preventing duplicate survey events.
+
 ## [1.2.1] - 2026-08-31
 
 - Refresh package and integration metadata.

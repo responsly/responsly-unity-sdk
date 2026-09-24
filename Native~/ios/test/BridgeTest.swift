@@ -7,9 +7,41 @@
 // The SDK is never initialised here, so nothing is stored and no network request is made.
 
 extension ResponslyUnityBridge {
+    static func testCreate(
+        registerListener: @escaping (ResponslyListener) -> ResponslyListenerToken
+    ) -> ResponslyUnityBridge {
+        ResponslyUnityBridge(registerListener: registerListener)
+    }
+
     /// The bridge's private display-guard entry, as the SDK calls it.
     func testAsk(survey: ResponslySurvey, decide: @escaping (Bool) -> Void) {
         ask(survey: survey, decide: decide)
+    }
+}
+
+private final class TestListenerRegistrations: @unchecked Sendable {
+    private let lock = NSLock()
+    private var tokens: [ResponslyListenerToken] = []
+
+    func add(_ listener: ResponslyListener) -> ResponslyListenerToken {
+        // Exercise overlapping first registrations while the real SDK is registering.
+        Thread.sleep(forTimeInterval: 0.02)
+        let token = Responsly.shared.addListener(listener)
+        lock.lock()
+        tokens.append(token)
+        lock.unlock()
+        return token
+    }
+
+    func removeAll() -> Int {
+        lock.lock()
+        let registered = tokens
+        tokens.removeAll()
+        lock.unlock()
+        for token in registered {
+            Responsly.shared.removeListener(token)
+        }
+        return registered.count
     }
 }
 
@@ -64,6 +96,15 @@ func testExpect(_ name: String, type: String, _ expected: NSDictionary) {
 
 responsly_unity_set_callback(testCallback)
 let testBridge = ResponslyUnityBridge.shared
+
+// Concurrent callback setup must register the listener once, so SDK events are not duplicated.
+let registrations = TestListenerRegistrations()
+let concurrentBridge = ResponslyUnityBridge.testCreate(registerListener: registrations.add)
+DispatchQueue.concurrentPerform(iterations: 32) { _ in
+    concurrentBridge.setCallback(testCallback)
+}
+let registrationCount = registrations.removeAll()
+testCheck("concurrent callback setup registers one listener", registrationCount == 1, "registered \(registrationCount) listeners")
 
 // --- events
 

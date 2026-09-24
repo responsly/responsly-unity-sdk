@@ -22,23 +22,24 @@ private final class ResponslyUnityBridge: ResponslyListener, @unchecked Sendable
     private static let guardForgetSeconds: TimeInterval = 5
 
     private let lock = NSLock()
+    private let registerListener: (ResponslyListener) -> ResponslyListenerToken
     private var callback: ResponslyUnityMessageCallback?
     private var listenerToken: ResponslyListenerToken?
     private var pendingDecisions: [Int32: (Bool) -> Void] = [:]
     private var lastRequestId: Int32 = 0
 
-    private init() {}
+    private init(registerListener: @escaping (ResponslyListener) -> ResponslyListenerToken = {
+        Responsly.shared.addListener($0)
+    }) {
+        self.registerListener = registerListener
+    }
 
     func setCallback(_ callback: ResponslyUnityMessageCallback?) {
         lock.lock()
+        defer { lock.unlock() }
         self.callback = callback
-        let register = listenerToken == nil
-        lock.unlock()
-        if register {
-            let token = Responsly.shared.addListener(self)
-            lock.lock()
-            listenerToken = token
-            lock.unlock()
+        if listenerToken == nil {
+            listenerToken = registerListener(self)
         }
     }
 
