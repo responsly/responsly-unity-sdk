@@ -145,7 +145,7 @@ All calls are static methods of `Responsly.ResponslySDK`. Every call returns at 
 | `SetTrackingEnabled(enabled)` | `false` switches the SDK off: no network, no targeting, nothing shown. Saved on the device. |
 | `Reset()` | Forgets the user, traits, counters and cached configuration; closes a visible survey. Call it on logout. |
 | `SetDisplayGuard(guard)` | A `Func<ResponslySurvey, bool>` asked on Unity's main thread before a survey becomes visible; `false` vetoes it. An exception counts as allow, and so does no answer within 2 seconds. Not asked for `Force`. `null` removes it. |
-| `ResponslySDK.SdkVersion` | `"1.2.1"` |
+| `ResponslySDK.SdkVersion` | `"1.2.2"` |
 
 Trait and property values are `string`, numbers (`int`, `long`, `float`, `double`, `decimal`), `bool` or dates. A `DateTime` or `DateTimeOffset` is sent as an ISO 8601 UTC string with seconds precision (`2026-11-10T12:00:00Z`); passing such a string yourself is the same thing. Anything else is sent as its text.
 
