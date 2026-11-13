@@ -137,7 +137,7 @@ All calls are static methods of `Responsly.ResponslySDK`. Every call returns at 
 | `SetAttributes(traits)` | Merges traits without changing the user ID. A `null` value removes a trait. |
 | `Track(eventName, properties)` | Adds one to the event's count and evaluates event triggers. |
 | `Screen(name)` | Sets the current screen and evaluates screen triggers. |
-| `ShowSurvey(surveyId, options)` | Shows a survey by its Survey ID. `ShowOptions`: `Force`, `HiddenFields`, `Locale`, `Presentation` (`ResponslyPresentation.BottomSheet`, `Dialog`, `Fullscreen`). |
+| `ShowSurvey(surveyId, options)` | Shows a survey by its Survey ID from the form's **Share → Mobile app** tab (a form with several configurations has one for each). `ShowOptions`: `Force`, `HiddenFields`, `Locale`, `Presentation` (`ResponslyPresentation.BottomSheet`, `Dialog`, `Fullscreen`). |
 | `CloseSurvey()` | Closes the survey that is visible or waiting to appear. |
 | `Pause()` / `Resume()` | Stops / resumes surveys started by triggers. `ShowSurvey` still works. |
 | `SetLocale(tag)` | Overrides the language, for example `"pl"`. `null` returns to the device language. |
