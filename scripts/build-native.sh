@@ -9,12 +9,13 @@
 # and records what they were built from in Native~/android/build-info.json and
 # Native~/ios/build-info.json.
 #
-# Usage:  scripts/build-native.sh [android] [ios] [--allow-dirty] [--keep-build]   (default: both)
+# Usage: scripts/build-native.sh [android] [ios] [--allow-dirty|--include-uncommitted] [--keep-build]
 #
-# The native repositories are only read. Their committed state (HEAD) is exported into a scratch
-# directory and everything is built there, so the binaries always match the recorded commit.
+# The native repositories are only read. By default the recorded commit is exported into a
+# scratch directory and everything is built there.
 # A repository with uncommitted changes is refused unless --allow-dirty is given (the uncommitted
-# changes are then NOT part of the build).
+# changes are then NOT part of the build). --include-uncommitted explicitly builds a snapshot of
+# git-listed working files instead, and records its source SHA-256 and base commit in build-info.
 #
 # The scratch directory (exported sources, Gradle output, Xcode archives and derived data, a few
 # hundred MB) is deleted as soon as the binaries are in Plugins/, and on failure, unless
@@ -24,7 +25,7 @@
 # Environment:
 #   RESPONSLY_ANDROID_SDK   path of the Android SDK repository (default ../responsly-android-sdk)
 #   RESPONSLY_IOS_SDK       path of the iOS SDK repository     (default ../responsly-ios-sdk)
-#   RESPONSLY_BUILD_DIR     scratch directory; it is emptied   (default: a new directory in $TMPDIR)
+#   RESPONSLY_BUILD_DIR     parent for a fresh scratch directory (default $TMPDIR)
 #   RESPONSLY_MIN_FREE_GB   free space a heavy step needs      (default 6)
 #   JAVA_HOME               a JDK 17 (default: the Homebrew openjdk@17, when installed)
 #   ANDROID_HOME            the Android SDK (default ~/Library/Android/sdk)
@@ -42,15 +43,18 @@ WORK=""
 BUILD_ANDROID=0
 BUILD_IOS=0
 ALLOW_DIRTY=0
+INCLUDE_UNCOMMITTED=0
+SOURCE_KIND="commit"
 KEEP_BUILD=0
 for argument in "$@"; do
     case "$argument" in
         android) BUILD_ANDROID=1 ;;
         ios) BUILD_IOS=1 ;;
         --allow-dirty) ALLOW_DIRTY=1 ;;
+        --include-uncommitted) ALLOW_DIRTY=1; INCLUDE_UNCOMMITTED=1; SOURCE_KIND="working-tree" ;;
         --keep-build) KEEP_BUILD=1 ;;
         -h|--help) sed -n '2,32p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
-        *) echo "error: unknown argument '$argument' (expected: android, ios, --allow-dirty, --keep-build)" >&2; exit 2 ;;
+        *) echo "error: unknown argument '$argument' (expected: android, ios, --allow-dirty, --include-uncommitted, --keep-build)" >&2; exit 2 ;;
     esac
 done
 if [ "$BUILD_ANDROID" = 0 ] && [ "$BUILD_IOS" = 0 ]; then
@@ -68,7 +72,9 @@ repository_commit() {
     local changes
     changes="$(git -C "$repository" status --porcelain)"
     if [ -n "$changes" ]; then
-        if [ "$ALLOW_DIRTY" = 1 ]; then
+        if [ "$INCLUDE_UNCOMMITTED" = 1 ]; then
+            echo "warning: $repository has uncommitted changes; a working-tree snapshot will be recorded" >&2
+        elif [ "$ALLOW_DIRTY" = 1 ]; then
             echo "warning: $repository has uncommitted changes; they are NOT part of this build" >&2
         else
             echo "$changes" >&2
@@ -78,12 +84,14 @@ repository_commit() {
     git -C "$repository" rev-parse HEAD
 }
 
-# Exports the committed files of a repository into an empty directory.
-export_head() {
-    local repository="$1" destination="$2"
-    rm -rf "$destination"
-    mkdir -p "$destination"
-    git -C "$repository" archive --format=tar HEAD | tar -x -C "$destination"
+# Exports the exact commit, or an explicitly requested working snapshot, and prints its digest.
+export_commit() {
+    local repository="$1" commit="$2" destination="$3"
+    if [ "$INCLUDE_UNCOMMITTED" = 1 ]; then
+        python3 "$ROOT/scripts/snapshot-native.py" "$repository" "$commit" "$destination" --working-tree
+    else
+        python3 "$ROOT/scripts/snapshot-native.py" "$repository" "$commit" "$destination"
+    fi
 }
 
 sha256() { shasum -a 256 "$1" | cut -d ' ' -f 1; }
@@ -120,12 +128,12 @@ build_file_version() {
 }
 
 build_android() {
-    local commit source aar classes class version
+    local commit source source_hash aar classes class version
     commit="$(repository_commit "$ANDROID_REPO")"
     source="$WORK/responsly-android-sdk"
 
     log "Android: exporting $(basename "$ANDROID_REPO") at $commit"
-    export_head "$ANDROID_REPO" "$source"
+    source_hash="$(export_commit "$ANDROID_REPO" "$commit" "$source")"
 
     # The bridge is compiled together with the SDK, so a signature change in the SDK fails here
     # and not in somebody's game.
@@ -167,6 +175,8 @@ build_android() {
   "sdk": "responsly-android-sdk",
   "sdkVersion": "$version",
   "sdkCommit": "$commit",
+  "sdkSource": "$SOURCE_KIND",
+  "sdkSourceSha256": "$source_hash",
   "contents": "com.responsly.sdk (the SDK) and com.responsly.unity (the Unity bridge, Native~/android/java)",
   "dependencies": [
     "org.jetbrains.kotlin:kotlin-stdlib:$(build_file_version "$source" coreLibrariesVersion)",
@@ -247,13 +257,13 @@ xcframework_slices() {
 }
 
 build_ios() {
-    local commit xcode swift
+    local commit source_hash xcode swift
     commit="$(repository_commit "$IOS_REPO")"
     # The directory name becomes the package's name in the build.
     IOS_SOURCE="$WORK/responsly-ios-sdk"
 
     log "iOS: exporting $(basename "$IOS_REPO") at $commit"
-    export_head "$IOS_REPO" "$IOS_SOURCE"
+    source_hash="$(export_commit "$IOS_REPO" "$commit" "$IOS_SOURCE")"
     rm -rf "$WORK/ios"
     mkdir -p "$WORK/ios"
 
@@ -295,6 +305,8 @@ $(xcframework_slices "$ROOT/Plugins/iOS/ResponslySDK.xcframework")
   "sdk": "responsly-ios-sdk",
   "sdkVersion": "$IOS_VERSION",
   "sdkCommit": "$commit",
+  "sdkSource": "$SOURCE_KIND",
+  "sdkSourceSha256": "$source_hash",
   "minimumIOS": "$(plutil -extract MinimumOSVersion raw "$ROOT/Plugins/iOS/ResponslySDK.xcframework/ios-arm64/ResponslySDK.framework/Info.plist")",
   "builtWith": "$xcode, Swift $swift"
 }
@@ -309,9 +321,9 @@ EOF
 [ "$BUILD_IOS" = 0 ] || repository_commit "$IOS_REPO" > /dev/null
 
 if [ -n "${RESPONSLY_BUILD_DIR:-}" ]; then
-    rm -rf "$RESPONSLY_BUILD_DIR"
     mkdir -p "$RESPONSLY_BUILD_DIR"
-    WORK="$(cd "$RESPONSLY_BUILD_DIR" && pwd)"
+    RESPONSLY_BUILD_PARENT="$(cd "$RESPONSLY_BUILD_DIR" && pwd)"
+    WORK="$(mktemp -d "$RESPONSLY_BUILD_PARENT/responsly-unity-native.XXXXXX")"
 else
     WORK="$(mktemp -d "${TMPDIR:-/tmp}/responsly-unity-native.XXXXXX")"
 fi

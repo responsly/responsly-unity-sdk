@@ -218,7 +218,7 @@ Plugins/Android/              responsly-sdk.aar: the Android SDK and the Unity b
 Plugins/iOS/                  ResponslySDK.xcframework, ResponslyUnityBridge.swift, PrivacyInfo.xcprivacy
 Samples~/Demo/                the demo panel
 Native~/                      source of the Android bridge, bridge tests, and what the binaries were built from
-scripts/                      build-native.sh, verify-package.sh
+scripts/                      native builds, package metadata and bridge verification
 ```
 
 Data crosses the native boundary as JSON text. On Android, C# calls `com.responsly.unity.ResponslyUnityBridge` through `AndroidJavaClass` and receives events through one `AndroidJavaProxy`. On iOS, C# calls `responsly_unity_*` C functions (`DllImport("__Internal")`) and receives events through one C callback.
@@ -230,6 +230,7 @@ The binaries in `Plugins/` are built from the native SDK repositories, checked o
 ```sh
 scripts/build-native.sh        # both; or: scripts/build-native.sh android | ios
 scripts/verify-package.sh      # checks metas and JSON, compares the bridges with the C# declarations, runs the bridge tests
+python3 scripts/verify-metadata.py # metadata, metas and native binary SHA-256 checks; no platform build tools needed
 ```
 
 `build-native.sh` exports the committed state of each repository into a scratch directory, builds there (it never writes into the native repositories), and records the commits in `Native~/android/build-info.json` and `Native~/ios/build-info.json`. It needs Xcode, a JDK 17 and the Android SDK.

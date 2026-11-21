@@ -3,7 +3,7 @@
 # Checks the package:
 #
 #   1. package.json, the assembly definitions and the build-info files are valid JSON, and the
-#      version numbers agree.
+#      version numbers agree. Packaged native binaries match the recorded SHA-256 checksums.
 #   2. Every file and folder Unity imports has a .meta, no .meta is orphaned, GUIDs are unique.
 #   3. iOS: Plugins/iOS/ResponslyUnityBridge.swift type-checks against every slice of
 #      ResponslySDK.xcframework, links with it into a dynamic library (as it does inside
@@ -52,125 +52,10 @@ CS_IOS="Runtime/Internal/ResponslyIOSPlatform.cs"
 CS_ANDROID="Runtime/Internal/ResponslyAndroidPlatform.cs"
 
 # ---------------------------------------------------------------------------------------------
-section "1. JSON and versions"
+section "1–2. Metadata, native checksums and Unity assets"
 # ---------------------------------------------------------------------------------------------
-if python3 - <<'PY'
-import json, re, sys
-
-ok = True
-def check(condition, message):
-    global ok
-    print(("PASS  " if condition else "FAIL  ") + message)
-    ok = ok and condition
-
-documents = {}
-for path in ["package.json", "Runtime/Responsly.Runtime.asmdef", "Editor/Responsly.Editor.asmdef",
-             "Native~/android/build-info.json", "Native~/ios/build-info.json"]:
-    try:
-        documents[path] = json.load(open(path))
-        check(True, path + " is valid JSON")
-    except Exception as error:
-        check(False, path + ": " + str(error))
-
-package = documents.get("package.json", {})
-check(package.get("name") == "com.responsly.sdk", "package name is com.responsly.sdk")
-check(package.get("displayName") == "Responsly SDK", "displayName is Responsly SDK")
-check(package.get("unity") == "2022.3", "unity is 2022.3")
-check(package.get("license") == "MIT", "license is MIT")
-version = package.get("version")
-constant = re.search(r'public const string SdkVersion = "([^"]+)"', open("Runtime/ResponslySDK.cs").read())
-check(constant is not None and constant.group(1) == version, "ResponslySDK.SdkVersion equals the package version (%s)" % version)
-for path in ["Native~/android/build-info.json", "Native~/ios/build-info.json"]:
-    info = documents.get(path, {})
-    check(info.get("sdkVersion") == version, "%s: native SDK %s at %s" % (path, info.get("sdkVersion"), str(info.get("sdkCommit"))[:7]))
-check(documents.get("Runtime/Responsly.Runtime.asmdef", {}).get("name") == "Responsly.Runtime", "runtime assembly is Responsly.Runtime")
-check(documents.get("Editor/Responsly.Editor.asmdef", {}).get("includePlatforms") == ["Editor"], "editor assembly is Editor-only")
-for sample in package.get("samples", []):
-    import os
-    check(os.path.isdir(sample["path"]), "sample path exists: " + sample["path"])
-sys.exit(0 if ok else 1)
-PY
-then :; else FAILURES=$((FAILURES + 1)); fi
-
-# ---------------------------------------------------------------------------------------------
-section "2. Meta files"
-# ---------------------------------------------------------------------------------------------
-if python3 - <<'PY'
-import os, re, sys
-
-# What Unity imports: everything except hidden entries (leading dot), folders that end with ~,
-# and the inside of a folder it treats as one asset.
-OPAQUE = (".xcframework", ".framework", ".bundle")
-assets, metas = [], []
-for current, dirs, files in os.walk("."):
-    rel = os.path.relpath(current, ".")
-    keep = []
-    for d in sorted(dirs):
-        if d.startswith(".") or d.endswith("~"):
-            continue
-        assets.append(os.path.normpath(os.path.join(rel, d)))
-        if not d.endswith(OPAQUE):
-            keep.append(d)
-    dirs[:] = keep
-    for f in sorted(files):
-        if f.startswith("."):
-            continue
-        path = os.path.normpath(os.path.join(rel, f))
-        (metas if f.endswith(".meta") else assets).append(path)
-
-# A sample is copied into the project with its metas, so they are checked too.
-for current, dirs, files in os.walk("Samples~"):
-    for name in sorted(dirs) + sorted(files):
-        path = os.path.join(current, name)
-        (metas if name.endswith(".meta") else assets).append(path)
-
-ok = True
-missing = [a for a in assets if a + ".meta" not in metas]
-orphans = [m for m in metas if m[:-5] not in assets]
-for path in missing:
-    print("FAIL  no .meta for " + path); ok = False
-for path in orphans:
-    print("FAIL  .meta without a file or folder: " + path); ok = False
-
-guids = {}
-for meta in metas:
-    text = open(meta).read()
-    match = re.search(r"^guid: ([0-9a-f]{32})$", text, re.M)
-    if not text.startswith("fileFormatVersion: 2\n") or not match:
-        print("FAIL  malformed .meta: " + meta); ok = False
-        continue
-    guids.setdefault(match.group(1), []).append(meta)
-    is_dir = os.path.isdir(meta[:-5])
-    if is_dir != ("folderAsset: yes" in text):
-        print("FAIL  folderAsset does not match: " + meta); ok = False
-for guid, paths in guids.items():
-    if len(paths) > 1:
-        print("FAIL  GUID %s is used by %s" % (guid, ", ".join(paths))); ok = False
-
-def platforms(meta):
-    text = open(meta).read()
-    return [name for name, key in (("Android", "Android: Android"), ("iOS", "iPhone: iOS"), ("Editor", "Editor: Editor"), ("Any", "Any: "))
-            if re.search(re.escape(key) + r"\s*\n\s+second:\n\s+enabled: 1", text)]
-
-expected = {
-    "Plugins/Android/responsly-sdk.aar.meta": ["Android"],
-    "Plugins/iOS/ResponslySDK.xcframework.meta": ["iOS"],
-    "Plugins/iOS/ResponslyUnityBridge.swift.meta": ["iOS"],
-    "Plugins/iOS/PrivacyInfo.xcprivacy.meta": ["iOS"],
-}
-for meta, wanted in expected.items():
-    found = platforms(meta) if os.path.exists(meta) else None
-    if found != wanted:
-        print("FAIL  %s enables %s, expected %s" % (meta, found, wanted)); ok = False
-    else:
-        print("PASS  %s: enabled for %s only" % (meta, ", ".join(wanted)))
-
-scripts = [a for a in assets if a.endswith(".cs")]
-print(("PASS  " if ok else "FAIL  ") + "%d assets (%d .cs files, %d folders), %d metas, %d unique GUIDs"
-      % (len(assets), len(scripts), len([a for a in assets if os.path.isdir(a)]), len(metas), len(guids)))
-sys.exit(0 if ok else 1)
-PY
-then :; else FAILURES=$((FAILURES + 1)); fi
+if python3 scripts/verify-metadata.py; then :; else FAILURES=$((FAILURES + 1)); fi
+if python3 -B -m unittest discover -s Native~/test -p 'test_*.py'; then :; else FAILURES=$((FAILURES + 1)); fi
 
 # ---------------------------------------------------------------------------------------------
 section "3. iOS bridge"
@@ -197,7 +82,7 @@ else
         slice="${entry%%:*}"; rest="${entry#*:}"; sdk="${rest%%:*}"; triple="${rest#*:}"
         sdk_path="$(xcrun --sdk "$sdk" --show-sdk-path)"
         for language in 5 6; do
-            if xcrun swiftc -typecheck -swift-version "$language" -module-name UnityFramework \
+            if xcrun swiftc -typecheck -swift-version "$language" -module-name UnityFramework -module-cache-path "$WORK/module-cache" \
                     -target "$triple" -sdk "$sdk_path" -F "$XCFRAMEWORK/$slice" "$SWIFT_BRIDGE" > "$WORK/typecheck.log" 2>&1; then
                 pass "swiftc -typecheck (Swift $language mode) for $triple"
             else
@@ -207,7 +92,7 @@ else
         # The real thing: compile the bridge and link it with the static framework into a
         # dynamic library, which is what happens to both inside UnityFramework.
         library="$WORK/UnityFramework-$triple.dylib"
-        if xcrun swiftc -emit-library -O -swift-version 5 -module-name UnityFramework \
+        if xcrun swiftc -emit-library -O -swift-version 5 -module-name UnityFramework -module-cache-path "$WORK/module-cache" \
                 -target "$triple" -sdk "$sdk_path" -F "$XCFRAMEWORK/$slice" -framework ResponslySDK \
                 "$SWIFT_BRIDGE" -o "$library" > "$WORK/link.log" 2>&1; then
             pass "compile + link with the static framework for $triple ($(stat -f %z "$library") bytes)"
@@ -279,16 +164,27 @@ if ! xcrun --find swiftc > /dev/null 2>&1; then
 elif [ -z "$IOS_COMMIT" ] || ! git -C "$IOS_REPO" cat-file -e "$IOS_COMMIT^{commit}" 2> /dev/null; then
     skip "the iOS SDK repository with commit ${IOS_COMMIT:-?} is not at $IOS_REPO"
 else
-    mkdir -p "$WORK/mac/src" "$WORK/mac/out"
-    git -C "$IOS_REPO" archive "$IOS_COMMIT" Sources | tar -x -C "$WORK/mac/src"
+    mkdir -p "$WORK/mac/out"
+    IOS_SOURCE_KIND="$(python3 -c 'import json; print(json.load(open("Native~/ios/build-info.json")).get("sdkSource", "commit"))')"
+    if [ "$IOS_SOURCE_KIND" = "working-tree" ]; then
+        SNAPSHOT_HASH="$(python3 scripts/snapshot-native.py "$IOS_REPO" "$IOS_COMMIT" "$WORK/mac/src" --working-tree)"
+    else
+        SNAPSHOT_HASH="$(python3 scripts/snapshot-native.py "$IOS_REPO" "$IOS_COMMIT" "$WORK/mac/src")"
+    fi
+    RECORDED_HASH="$(python3 -c 'import json; print(json.load(open("Native~/ios/build-info.json")).get("sdkSourceSha256", ""))')"
+    SOURCE_MATCHES=1
+    if [ -n "$RECORDED_HASH" ] && [ "$SNAPSHOT_HASH" != "$RECORDED_HASH" ]; then
+        fail "the available iOS source snapshot differs from the binary build-info; rebuild before testing"
+        SOURCE_MATCHES=0
+    fi
     mac_target="$(uname -m)-apple-macos12.0"
     mac_sdk="$(xcrun --sdk macosx --show-sdk-path)"
     cat "$SWIFT_BRIDGE" "Native~/ios/test/BridgeTest.swift" > "$WORK/mac/out/main.swift"
-    if xcrun swiftc -swift-version 5 -parse-as-library -module-name ResponslySDK \
+    if [ "$SOURCE_MATCHES" = 1 ] && xcrun swiftc -swift-version 5 -parse-as-library -module-name ResponslySDK -module-cache-path "$WORK/module-cache" \
             -emit-module -emit-module-path "$WORK/mac/out/ResponslySDK.swiftmodule" -emit-library -static \
             -target "$mac_target" -sdk "$mac_sdk" $(find "$WORK/mac/src/Sources/ResponslySDK" -name '*.swift') \
             -o "$WORK/mac/out/libResponslySDK.a" > "$WORK/mac/build.log" 2>&1 \
-        && xcrun swiftc -swift-version 5 -module-name BridgeTest -target "$mac_target" -sdk "$mac_sdk" \
+        && xcrun swiftc -swift-version 5 -module-name BridgeTest -module-cache-path "$WORK/module-cache" -target "$mac_target" -sdk "$mac_sdk" \
             -I "$WORK/mac/out" -L "$WORK/mac/out" -lResponslySDK "$WORK/mac/out/main.swift" \
             -o "$WORK/mac/out/bridge-test" >> "$WORK/mac/build.log" 2>&1 \
         && "$WORK/mac/out/bridge-test" > "$WORK/mac/test.log" 2>&1; then
