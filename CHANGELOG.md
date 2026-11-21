@@ -2,6 +2,16 @@
 
 All notable changes to this SDK are documented here.
 
+## [1.2.3] - 2026-11-21
+
+### Security
+
+- Rebuild the bundled native libraries from the iOS and Android SDKs 1.2.3: API requests no longer follow redirects, survey links open outside the app only after a tap and only for `http`, `https`, `mailto`, `tel` and `sms`, `apiHost` and survey addresses must use https (plain http only for local development hosts), and debug logs no longer print answers.
+
+### Changed
+
+- `scripts/verify-metadata.py` checks the package metadata, the metas and the SHA-256 of the native binaries without platform build tools; `scripts/build-native.sh --include-uncommitted` builds from a snapshot of local changes and records it.
+
 ## [1.2.2] - 2026-11-12
 
 ### Fixed
